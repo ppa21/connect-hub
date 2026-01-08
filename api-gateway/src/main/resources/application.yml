@@ -1,0 +1,32 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        # Route 1: Auth Service
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**
+        # Route 2: Chat Service (REST API)
+        - id: chat-service-rest
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/chat/**
+        
+        # Route 3: Chat Service (Standard WebSocket)
+        - id: chat-service-ws
+          uri: ws://localhost:8082
+          predicates:
+            - Path=/ws/**
